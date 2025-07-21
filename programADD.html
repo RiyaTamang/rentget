@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="margin:0% ; height: 100 vh;">
+
+    <div id="container"></div>
+    <div id="message"></div>
+ <script>
+    document.addEventListener("DOMContentLoaded", function(){
+    const container =document.getElementById('container');
+    const p_num= parseInt(prompt("Enter the Number of programs"),10);
+    if(p_num<0||isNaN(p_num))
+    {
+        alert("please enter a positive number");
+        return;
+    }
+     const form = document.createElement('form');
+    form.method='POST';
+    form.action='programADD.php';
+    form.id='programform'
+
+    for(let i=0;i<p_num;i++)
+    {
+        const label= document.createElement('label');
+        label.textContent= `Enter Program Name ${i+1} :`;
+        label.setAttribute('for', `program${i+1}`);
+       const input= document.createElement('input');
+       input.type= 'text';
+       input.name='program_name[]';
+       input.id = `program${i+1}`;
+       let div = document.createElement('div');
+       div.appendChild(label);
+       div.appendChild(input);
+       form.appendChild(div);
+
+    }
+   const btn = document.createElement('button');
+   btn.textContent= 'save';
+   btn.type='submit';
+   btn.name='btn';
+//   document.body.appendChild(btn);
+   Object.assign(btn.style,{
+   marginTop: '17px',
+   backgroundColor:'#73E02A',
+   color:'white'
+    });
+   form.appendChild(btn);
+container.appendChild(form);
+
+document.getElementbyId('programform').addEventListener('submit', async function(e)
+{
+ e.preventDeafult();
+ let message=document.getElementById('message')
+ const targeted_form =e.target;
+ const formarray = new FormData(targeted_form);
+
+try{
+ const response = await fetch('programADD.php',
+ {
+    method:'POST',
+    body:formarray
+ });//server's response is required to run this code.
+ //connects through php file, and response collects the response of server where body has data which is form
+ const result = await response.json();
+if(result.success)
+{
+    message.textContent= result.message;
+    message.style.Color='green';
+}
+else{
+     message.textContent= result.message;
+    message.style.Color='Red';
+}
+}
+catch(err)
+{
+    message.textContent=`Error while submitting the form`;
+    message.style.color='red';
+}
+});
+});
+
+
+ </script>
+</body>
+</html>
